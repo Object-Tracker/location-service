@@ -40,7 +40,6 @@ public class LocationService {
         obj.setLongitude(request.getLongitude());
         trackedObjectRepository.save(obj);
 
-        // Publish to RabbitMQ for geofence checking
         LocationUpdateMessage message = LocationUpdateMessage.builder()
                 .objectId(obj.getId())
                 .userId(userId)
@@ -61,7 +60,6 @@ public class LocationService {
 
         log.info("Location update sent to RabbitMQ for object {}", obj.getId());
 
-        // Build response
         LocationBroadcast broadcast = LocationBroadcast.builder()
                 .objectId(obj.getId())
                 .name(obj.getName())
@@ -71,7 +69,6 @@ public class LocationService {
                 .outsideGeofence(obj.getOutsideGeofence())
                 .build();
 
-        // Broadcast to WebSocket subscribers
         messagingTemplate.convertAndSend("/topic/locations/" + userId, broadcast);
 
         return broadcast;
@@ -99,7 +96,6 @@ public class LocationService {
         obj.setOutsideGeofence(outsideGeofence);
         trackedObjectRepository.save(obj);
 
-        // Broadcast updated status
         LocationBroadcast broadcast = LocationBroadcast.builder()
                 .objectId(obj.getId())
                 .name(obj.getName())

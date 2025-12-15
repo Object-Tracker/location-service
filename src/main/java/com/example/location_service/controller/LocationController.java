@@ -42,10 +42,8 @@ public class LocationController {
         return ResponseEntity.ok(locationService.getAllLocations(userId));
     }
 
-    // WebSocket endpoint for location updates
     @MessageMapping("/location.update")
     public void handleLocationUpdate(@Payload LocationUpdateRequest request, SimpMessageHeaderAccessor headerAccessor) {
-        // Extract userId from session attributes (set during WebSocket handshake)
         Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
         if (sessionAttributes != null && sessionAttributes.containsKey("userId")) {
             Long userId = (Long) sessionAttributes.get("userId");
